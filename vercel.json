@@ -1,0 +1,41 @@
+{
+  "name": "kassas-pro",
+  "version": 2,
+  "public": true,
+  "buildCommand": "npm run build || true",
+  "installCommand": "npm install || true",
+  "env": {
+    "ANTHROPIC_API_KEY": "@anthropic_api_key",
+    "GOOGLE_CLIENT_ID": "@google_client_id",
+    "GOOGLE_CLIENT_SECRET": "@google_client_secret",
+    "GOOGLE_REFRESH_TOKEN": "@google_refresh_token",
+    "KASSAS_ACCESS_CODE": "@kassas_access_code",
+    "KASSAS_ACCESS_CODE_2": "@kassas_access_code_2",
+    "FIREBASE_PROJECT_ID": "@firebase_project_id",
+    "FIREBASE_PRIVATE_KEY": "@firebase_private_key",
+    "FIREBASE_CLIENT_EMAIL": "@firebase_client_email",
+    "NODE_ENV": "production"
+  },
+  "builds": [
+    {
+      "src": "public/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/:path((?!api).*)",
+      "destination": "/index.html"
+    }
+  ]
+}

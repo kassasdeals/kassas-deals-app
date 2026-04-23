@@ -1,5 +1,5 @@
 {
-  "buildCommand": "echo 'build'",
-  "installCommand": "echo 'install'",
-  "outputDirectory": "public"
+  "buildCommand": false,
+  "installCommand": false,
+  "outputDirectory": "."
 }

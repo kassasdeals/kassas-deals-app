@@ -1,183 +1,235 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KASSAS Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Roboto', sans-serif; background: #f8fafc; color: #081750; }
+        .login-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .login-container { background: white; padding: 50px; border-radius: 16px; max-width: 400px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
+        .login-logo { text-align: center; margin-bottom: 40px; }
+        .login-logo h1 { font-size: 32px; color: #081750; margin: 20px 0 10px; font-family: 'Bebas Neue'; }
+        .login-logo p { color: #64748b; font-size: 14px; }
+        .form-group { margin-bottom: 20px; }
+        .form-label { display: block; font-size: 12px; font-weight: 700; color: #64748b; margin-bottom: 8px; text-transform: uppercase; }
+        .form-input { width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 15px; }
+        .form-input:focus { outline: none; border-color: #2941cd; background: #f0f5ff; }
+        .btn { width: 100%; padding: 12px; background: linear-gradient(135deg, #081750, #2941cd); color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 14px; text-transform: uppercase; }
+        .btn:hover { box-shadow: 0 8px 20px rgba(8,23,80,0.3); }
+        .error { background: rgba(239,68,68,0.1); color: #dc2626; padding: 12px; border-radius: 8px; margin-bottom: 20px; border-left: 3px solid #dc2626; display: none; }
+        .error.show { display: block; }
+        .hidden { display: none !important; }
+        .app-header { background: white; padding: 20px; border-bottom: 1px solid #e2e8f0; }
+        .header-content { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .header-logo { font-size: 24px; font-weight: 700; color: #081750; font-family: 'Bebas Neue'; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 30px 20px; }
+        .status-bar { background: linear-gradient(135deg, #081750, #2941cd); color: white; padding: 15px 20px; border-radius: 10px; margin-bottom: 25px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px; }
+        .stat-card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .stat-label { font-size: 11px; color: #64748b; margin-bottom: 8px; text-transform: uppercase; font-weight: 700; }
+        .stat-value { font-size: 28px; font-weight: 800; color: #2941cd; font-family: 'Bebas Neue'; }
+        .filters { background: white; padding: 20px; border-radius: 12px; margin-bottom: 25px; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .filter-input { padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 13px; }
+        .deals-grid { display: grid; gap: 20px; }
+        .deal-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08); cursor: pointer; transition: all 0.3s; }
+        .deal-card:hover { box-shadow: 0 12px 30px rgba(0,61,165,0.15); transform: translateY(-4px); }
+        .deal-header { padding: 20px; background: linear-gradient(135deg, #081750, #2941cd); color: white; display: flex; justify-content: space-between; align-items: flex-start; }
+        .deal-address { font-size: 18px; font-weight: 700; font-family: 'Bebas Neue'; margin-bottom: 5px; }
+        .deal-city { font-size: 13px; color: rgba(255,255,255,0.9); }
+        .score-badge { width: 80px; height: 80px; background: rgba(255,255,255,0.15); border: 3px solid white; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .score-number { font-size: 32px; font-weight: 800; color: white; }
+        .score-label { font-size: 9px; color: rgba(255,255,255,0.9); text-transform: uppercase; font-weight: 700; }
+        .deal-body { padding: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 20px; }
+        .metric { display: flex; flex-direction: column; gap: 5px; }
+        .metric-label { font-size: 10px; color: #64748b; text-transform: uppercase; font-weight: 700; }
+        .metric-value { font-size: 18px; font-weight: 800; color: #2941cd; font-family: 'Bebas Neue'; }
+        .deal-footer { padding: 15px 20px; border-top: 1px solid #e2e8f0; display: flex; gap: 10px; justify-content: space-between; flex-wrap: wrap; }
+        .btn-small { padding: 6px 12px; font-size: 11px; border: none; border-radius: 6px; cursor: pointer; font-weight: 700; text-transform: uppercase; }
+        .btn-info { background: #2941cd; color: white; }
+        .btn-action { background: #22c55e; color: white; }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); overflow-y: auto; }
+        .modal.active { display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .modal-content { background: white; padding: 40px; border-radius: 16px; max-width: 700px; width: 100%; }
+        .modal-header { border-bottom: 2px solid #e2e8f0; padding-bottom: 20px; margin-bottom: 25px; display: flex; justify-content: space-between; }
+        .modal-title { font-size: 24px; font-weight: 800; color: #2941cd; }
+        .close-btn { background: none; border: none; font-size: 28px; cursor: pointer; color: #64748b; }
+        .modal-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        .modal-table tr { border-bottom: 1px solid #e2e8f0; }
+        .modal-table td { padding: 12px; }
+        .empty { text-align: center; padding: 60px 20px; color: #64748b; }
+        .empty-icon { font-size: 48px; margin-bottom: 15px; }
+        .logout-btn { background: #64748b; color: white; padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; }
+    </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginPage" class="login-page">
+    <div class="login-container">
+        <div class="login-logo">
+            <h1>KASSAS Pro</h1>
+            <p>Análisis Automático de Deals en Florida</p>
+        </div>
+        <div id="loginError" class="error"></div>
+        <form onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label class="form-label">Código de Acceso</label>
+                <input type="password" id="accessCode" class="form-input" placeholder="Ingresa tu código" required>
+            </div>
+            <button type="submit" class="btn">Acceder</button>
+        </form>
+        <div style="text-align: center; margin-top: 20px; font-size: 12px; color: #64748b;">
+            <p>Códigos: KASSAS2024 o demo123</p>
+        </div>
+    </div>
+</div>
+
+<!-- APP -->
+<div id="appPage" class="hidden">
+    <div class="app-header">
+        <div class="header-content">
+            <div class="header-logo">KASSAS Pro</div>
+            <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="status-bar">✓ Sistema activo</div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Deals</div>
+                <div class="stat-value" id="totalDeals">2</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Promedio Score</div>
+                <div class="stat-value" id="avgScore">85</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Ganancia Total</div>
+                <div class="stat-value" id="totalProfit">$225K</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Top Score</div>
+                <div class="stat-value" id="topScore">92</div>
+            </div>
+        </div>
+
+        <div class="filters">
+            <div>
+                <label class="form-label">Min. Score</label>
+                <input type="range" class="filter-input" id="scoreFilter" min="0" max="100" value="0" onchange="applyFilters()" style="width: 100%;">
+            </div>
+            <div>
+                <label class="form-label">Condado</label>
+                <select class="filter-input" id="countyFilter" onchange="applyFilters()" style="width: 100%;">
+                    <option value="">Todos</option>
+                    <option value="Miami-Dade">Miami-Dade</option>
+                    <option value="Hillsborough">Hillsborough</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="deals-grid" id="dealsContainer"></div>
+    </div>
+</div>
+
+<!-- MODAL -->
+<div id="detailsModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div>
+                <h2 class="modal-title" id="modalAddress"></h2>
+                <p style="color: #64748b; margin-top: 5px;" id="modalCity"></p>
+            </div>
+            <button class="close-btn" onclick="closeModal('detailsModal')">&times;</button>
+        </div>
+        <table class="modal-table">
+            <tr><td><strong>Deal Score</strong></td><td id="modalScore"></td></tr>
+            <tr><td>Precio</td><td id="modalPrice"></td></tr>
+            <tr><td>ARV</td><td id="modalARV"></td></tr>
+            <tr><td>Rehab</td><td id="modalRehab"></td></tr>
+            <tr><td><strong>Ganancia</strong></td><td id="modalProfit" style="color: #22c55e;"></td></tr>
+            <tr><td><strong>ROI</strong></td><td id="modalROI"></td></tr>
+        </table>
+        <button class="btn-small btn-action" onclick="alert('Función en desarrollo')">Generar Oferta</button>
+        <button class="btn-small btn-info" onclick="alert('Función en desarrollo')" style="margin-left: 5px;">Contactar</button>
+        <button class="btn-small" onclick="closeModal('detailsModal')" style="margin-left: 5px; background: #64748b; color: white;">Cerrar</button>
+    </div>
+</div>
+
 <script>
-    let allDeals = [];
+    const deals = [
+        {id: 1, address: "1247 Maple Street", city: "Miami", county: "Miami-Dade", bedrooms: 3, bathrooms: 2, sqft: 1850, askingPrice: 95000, arv: 250000, rehab: 40000, dealScore: 92, roi: 121, profit: 115000},
+        {id: 2, address: "542 Oak Avenue", city: "Tampa", county: "Hillsborough", bedrooms: 4, bathrooms: 2.5, sqft: 2200, askingPrice: 145000, arv: 310000, rehab: 55000, dealScore: 78, roi: 54, profit: 110000}
+    ];
 
     function handleLogin(event) {
         event.preventDefault();
         const code = document.getElementById('accessCode').value.trim();
         
-        console.log('Código ingresado: "' + code + '"');
-        alert('Código ingresado: "' + code + '"\n\nEsperando validación...');
-        
-        // Validación simple
         if (code === 'KASSAS2024' || code === 'demo123') {
-            alert('✓ ¡Acceso concedido!');
-            localStorage.setItem('kassas_token', 'token_' + Date.now());
             localStorage.setItem('kassas_login', 'true');
-            
-            // Cambiar pantalla
             document.getElementById('loginPage').classList.add('hidden');
             document.getElementById('appPage').classList.remove('hidden');
-            
-            // Cargar datos
-            loadDeals();
-            startAutoSync();
+            renderDeals(deals);
         } else {
-            alert('✗ Código inválido\n\nCódigos válidos:\n- KASSAS2024\n- demo123');
-            showError('Código de acceso inválido');
+            document.getElementById('loginError').textContent = '❌ Código inválido';
+            document.getElementById('loginError').classList.add('show');
         }
     }
 
-    function showError(message) {
-        const errorDiv = document.getElementById('loginError');
-        errorDiv.textContent = '❌ ' + message;
-        errorDiv.classList.add('show');
-        setTimeout(() => errorDiv.classList.remove('show'), 4000);
-    }
-
     function logout() {
-        localStorage.removeItem('kassas_token');
         localStorage.removeItem('kassas_login');
         location.reload();
     }
 
-    function generateSampleDeals() {
-        return [
-            {
-                id: 1,
-                address: "1247 Maple Street",
-                city: "Miami",
-                county: "Miami-Dade",
-                bedrooms: 3,
-                bathrooms: 2,
-                sqft: 1850,
-                askingPrice: 95000,
-                arv: 250000,
-                rehab: 40000,
-                dealScore: 92,
-                roi: 121,
-                profit: 115000,
-                spread: 115000,
-                condition: "distressed",
-                propertyType: "Single Family"
-            },
-            {
-                id: 2,
-                address: "542 Oak Avenue",
-                city: "Tampa",
-                county: "Hillsborough",
-                bedrooms: 4,
-                bathrooms: 2.5,
-                sqft: 2200,
-                askingPrice: 145000,
-                arv: 310000,
-                rehab: 55000,
-                dealScore: 78,
-                roi: 54,
-                profit: 110000,
-                spread: 71500,
-                condition: "vacant",
-                propertyType: "Single Family"
-            }
-        ];
-    }
-
-    function loadDeals() {
-        allDeals = generateSampleDeals();
-        applyFilters();
-        updateStats();
-    }
-
-    function applyFilters() {
-        const minScore = parseInt(document.getElementById('scoreFilter').value) || 0;
-        const county = document.getElementById('countyFilter').value;
-        const sort = document.getElementById('sortFilter').value;
-
-        let filtered = allDeals.filter(d => {
-            if (d.dealScore < minScore) return false;
-            if (county && d.county !== county) return false;
-            return true;
-        });
-
-        if (sort === 'score-desc') {
-            filtered.sort((a, b) => b.dealScore - a.dealScore);
-        } else if (sort === 'roi-desc') {
-            filtered.sort((a, b) => b.roi - a.roi);
-        } else if (sort === 'profit-desc') {
-            filtered.sort((a, b) => b.profit - a.profit);
-        }
-
-        renderDeals(filtered);
-    }
-
-    function renderDeals(deals) {
-        const container = document.getElementById('dealsContainer');
-
-        if (deals.length === 0) {
-            container.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div><p>No hay deals que cumplan los filtros</p></div>';
-            return;
-        }
-
-        container.innerHTML = deals.map(deal => `
-            <div class="deal-card" onclick="viewDetails(${deal.id})">
+    function renderDeals(dealsToShow) {
+        const html = dealsToShow.map(d => `
+            <div class="deal-card" onclick="viewDetails(${d.id})">
                 <div class="deal-header">
-                    <div class="deal-title">
-                        <div class="deal-address">${deal.address}</div>
-                        <div class="deal-city">${deal.city}, ${deal.county} • ${deal.bedrooms}bed/${deal.bathrooms}ba</div>
+                    <div>
+                        <div class="deal-address">${d.address}</div>
+                        <div class="deal-city">${d.city}, ${d.county} • ${d.bedrooms}bed/${d.bathrooms}ba</div>
                     </div>
                     <div class="score-badge">
-                        <div class="score-number">${deal.dealScore}</div>
+                        <div class="score-number">${d.dealScore}</div>
                         <div class="score-label">SCORE</div>
                     </div>
                 </div>
                 <div class="deal-body">
                     <div class="metric">
                         <div class="metric-label">Precio</div>
-                        <div class="metric-value">$${deal.askingPrice.toLocaleString()}</div>
+                        <div class="metric-value">$${d.askingPrice.toLocaleString()}</div>
                     </div>
                     <div class="metric">
                         <div class="metric-label">ARV</div>
-                        <div class="metric-value">$${deal.arv.toLocaleString()}</div>
+                        <div class="metric-value">$${d.arv.toLocaleString()}</div>
                     </div>
                     <div class="metric">
                         <div class="metric-label">Ganancia</div>
-                        <div class="metric-value">$${deal.profit.toLocaleString()}</div>
-                        <div class="metric-sub">${deal.roi}% ROI</div>
+                        <div class="metric-value">$${d.profit.toLocaleString()}</div>
                     </div>
                     <div class="metric">
-                        <div class="metric-label">Rehab</div>
-                        <div class="metric-value">$${deal.rehab.toLocaleString()}</div>
+                        <div class="metric-label">ROI</div>
+                        <div class="metric-value">${d.roi}%</div>
                     </div>
                 </div>
                 <div class="deal-footer">
-                    <div class="action-buttons">
-                        <button class="btn-small btn-info" onclick="event.stopPropagation(); viewDetails(${deal.id})">Ver Detalles</button>
-                        <button class="btn-small btn-action" onclick="event.stopPropagation(); generateOffer()">Oferta</button>
-                    </div>
-                    <div class="tags">
-                        ${deal.condition === 'distressed' ? '<span class="tag tag-distressed">⚠️ Distressed</span>' : ''}
-                        <span class="tag tag-florida">🏖️ FL</span>
-                        <span class="tag tag-hot">🔥 Top</span>
-                    </div>
+                    <button class="btn-small btn-info" onclick="event.stopPropagation(); viewDetails(${d.id})">Ver Detalles</button>
                 </div>
             </div>
         `).join('');
-    }
-
-    function updateStats() {
-        const avgScore = allDeals.length > 0 ? Math.round(allDeals.reduce((s, d) => s + d.dealScore, 0) / allDeals.length) : 0;
-        const totalProfit = allDeals.reduce((s, d) => s + d.profit, 0);
-        const topScore = allDeals.length > 0 ? Math.max(...allDeals.map(d => d.dealScore)) : 0;
-
-        document.getElementById('totalDeals').textContent = allDeals.length;
-        document.getElementById('avgScore').textContent = avgScore;
-        document.getElementById('totalProfit').textContent = `$${(totalProfit / 1000).toFixed(0)}K`;
-        document.getElementById('topScore').textContent = topScore;
+        document.getElementById('dealsContainer').innerHTML = html || '<div class="empty"><p>No hay deals</p></div>';
     }
 
     function viewDetails(dealId) {
-        const deal = allDeals.find(d => d.id === dealId);
+        const deal = deals.find(d => d.id === dealId);
         if (!deal) return;
-
+        
         document.getElementById('modalAddress').textContent = deal.address;
         document.getElementById('modalCity').textContent = `${deal.city}, ${deal.county}, FL`;
         document.getElementById('modalScore').textContent = `${deal.dealScore}/100`;
@@ -186,75 +238,32 @@
         document.getElementById('modalRehab').textContent = `$${deal.rehab.toLocaleString()}`;
         document.getElementById('modalProfit').textContent = `$${deal.profit.toLocaleString()}`;
         document.getElementById('modalROI').textContent = `${deal.roi}%`;
-        document.getElementById('modalSpread').textContent = `$${deal.spread.toLocaleString()}`;
-        document.getElementById('modalType').textContent = deal.propertyType;
-        document.getElementById('modalSqft').textContent = `${deal.sqft.toLocaleString()} sqft`;
-        document.getElementById('modalBeds').textContent = `${deal.bedrooms}bed / ${deal.bathrooms}ba`;
-        document.getElementById('modalCondition').textContent = deal.condition;
-
-        openModal('detailsModal');
-    }
-
-    function generateOffer() {
-        alert('📄 Generar oferta\n\n(Función en desarrollo)');
-    }
-
-    function contactSeller() {
-        alert('📧 Contactar vendedor\n\n(Función en desarrollo)');
-    }
-
-    function openModal(id) {
-        document.getElementById(id).classList.add('active');
+        
+        document.getElementById('detailsModal').classList.add('active');
     }
 
     function closeModal(id) {
         document.getElementById(id).classList.remove('active');
     }
 
-    async function syncDeals() {
-        const btn = document.getElementById('syncBtn');
-        btn.classList.add('syncing');
-        btn.textContent = '⏳ Sincronizando...';
-
-        try {
-            allDeals = generateSampleDeals();
-            await new Promise(r => setTimeout(r, 2000));
-            
-            applyFilters();
-            updateStats();
-            alert('✓ Deals sincronizados correctamente');
-        } catch (error) {
-            showError('Error sincronizando deals');
-        } finally {
-            btn.classList.remove('syncing');
-            btn.textContent = '🔄 Sincronizar Deals';
-        }
+    function applyFilters() {
+        const minScore = parseInt(document.getElementById('scoreFilter').value) || 0;
+        const county = document.getElementById('countyFilter').value;
+        const filtered = deals.filter(d => d.dealScore >= minScore && (!county || d.county === county));
+        renderDeals(filtered);
     }
 
-    function startAutoSync() {
-        setInterval(syncDeals, 5 * 60 * 1000);
-    }
-
-    function checkAuth() {
-        const isLoggedIn = localStorage.getItem('kassas_login') === 'true';
-        if (isLoggedIn) {
-            document.getElementById('loginPage').classList.add('hidden');
-            document.getElementById('appPage').classList.remove('hidden');
-            loadDeals();
-            startAutoSync();
-        }
-    }
-
-    // Inicializar cuando cargue la página
-    document.addEventListener('DOMContentLoaded', () => {
-        checkAuth();
-    });
-
-    // Cerrar modal al hacer click afuera
-    window.onclick = function(event) {
+    window.onclick = (e) => {
         const modal = document.getElementById('detailsModal');
-        if (event.target === modal) {
-            closeModal('detailsModal');
-        }
+        if (e.target === modal) modal.classList.remove('active');
     };
+
+    if (localStorage.getItem('kassas_login') === 'true') {
+        document.getElementById('loginPage').classList.add('hidden');
+        document.getElementById('appPage').classList.remove('hidden');
+        renderDeals(deals);
+    }
 </script>
+
+</body>
+</html>

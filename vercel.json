@@ -1,4 +1,5 @@
 {
-  "buildCommand": "npm run build || true",
-  "installCommand": "npm install || true"
+  "buildCommand": "echo 'build'",
+  "installCommand": "echo 'install'",
+  "outputDirectory": "public"
 }
